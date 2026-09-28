@@ -1,0 +1,28 @@
+{
+  "name": "sistema-acessorios-esportes",
+  "version": "1.0.0",
+  "description": "Sistema completo para gerenciamento de acessórios para esportes com Node.js, Express, MongoDB Atlas e frontend Vanilla JS",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/server.js",
+    "dev": "node api/server.js",
+    "test": "node tests/test_runner.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "sports",
+    "vercel",
+    "crud"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.1"
+  }
+}

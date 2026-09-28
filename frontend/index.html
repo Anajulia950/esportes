@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SportGear — Gerenciamento de Acessórios Esportivos</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Navbar / Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+            <path d="M2 12h20"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>SportGear</h1>
+          <span class="brand-subtitle">Gestão de Acessórios Esportivos</span>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button id="btn-novo" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Novo Acessório
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+    
+    <!-- Controls Bar: Search, Filters & Counters -->
+    <section class="controls-card">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="text" 
+          id="input-busca" 
+          placeholder="Buscar por marca, modelo ou esporte..." 
+          autocomplete="off"
+        >
+        <button id="btn-limpar-busca" class="btn-clear hidden" title="Limpar busca">&times;</button>
+      </div>
+
+      <div class="filter-group">
+        <label for="select-esporte" class="filter-label">Esporte:</label>
+        <select id="select-esporte" class="custom-select">
+          <option value="">Todos os Esportes</option>
+          <option value="Futebol">Futebol</option>
+          <option value="Ciclismo">Ciclismo</option>
+          <option value="Corrida">Corrida</option>
+          <option value="Natação">Natação</option>
+          <option value="Basquete">Basquete</option>
+          <option value="Vôlei">Vôlei</option>
+          <option value="Tênis">Tênis</option>
+          <option value="Musculação">Musculação</option>
+          <option value="Artes Marciais">Artes Marciais</option>
+          <option value="Outros">Outros</option>
+        </select>
+
+        <button id="btn-recarregar" class="btn btn-secondary btn-icon" title="Atualizar listagem">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="stats-badge">
+        Total: <strong id="contador-total">0</strong> itens
+      </div>
+    </section>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="state-container hidden">
+      <div class="spinner"></div>
+      <p class="state-text">Carregando acessórios esportivos...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="state-container hidden">
+      <div class="state-icon error-icon">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h3 id="error-title">Falha na Conexão</h3>
+      <p id="error-msg" class="state-text">Não foi possível carregar os acessórios da API.</p>
+      <button id="btn-tentar-novamente" class="btn btn-primary">Tentar Novamente</button>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="state-container hidden">
+      <div class="state-icon">
+        <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+      </div>
+      <h3>Nenhum acessório encontrado</h3>
+      <p class="state-text">Cadastre seu primeiro acessório para começar a gerenciar seu inventário esportivo.</p>
+      <button id="btn-cadastrar-primeiro" class="btn btn-primary">Cadastrar Acessório</button>
+    </div>
+
+    <!-- Accessories Grid -->
+    <section id="grid-acessorios" class="cards-grid"></section>
+
+  </main>
+
+  <!-- Modal Formulário (Cadastrar / Editar) -->
+  <div id="modal-form" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="modal-title">Novo Acessório</h2>
+        <button id="modal-close" class="btn-close" aria-label="Fechar">&times;</button>
+      </div>
+
+      <form id="form-acessorio" novalidate>
+        <input type="hidden" id="form-id">
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="form-esporte">Esporte / Categoria <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="form-esporte" 
+              placeholder="Ex: Ciclismo, Futebol, Natação" 
+              list="lista-esportes-sugestoes"
+              required
+            >
+            <datalist id="lista-esportes-sugestoes">
+              <option value="Futebol"></option>
+              <option value="Ciclismo"></option>
+              <option value="Corrida"></option>
+              <option value="Natação"></option>
+              <option value="Basquete"></option>
+              <option value="Vôlei"></option>
+              <option value="Tênis"></option>
+              <option value="Musculação"></option>
+              <option value="Artes Marciais"></option>
+            </datalist>
+            <small class="field-error" id="erro-esporte"></small>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="form-marca">Marca <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="form-marca" 
+              placeholder="Ex: Nike, Speedo, Giro, Penalty" 
+              required
+            >
+            <small class="field-error" id="erro-marca"></small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label for="form-modelo">Modelo <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="form-modelo" 
+              placeholder="Ex: Capacete Foray MIPS, Luva Goleiro Delta" 
+              required
+            >
+            <small class="field-error" id="erro-modelo"></small>
+          </div>
+
+          <div class="form-group flex-1">
+            <label for="form-preco">Preço (R$) <span class="required">*</span></label>
+            <input 
+              type="number" 
+              id="form-preco" 
+              placeholder="0.00" 
+              step="0.01" 
+              min="0" 
+              required
+            >
+            <small class="field-error" id="erro-preco"></small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="form-foto">URL da Foto</label>
+          <input 
+            type="url" 
+            id="form-foto" 
+            placeholder="https://exemplo.com/imagem.jpg"
+          >
+          <small class="field-hint">Insira uma URL pública da imagem. Caso não informe, uma imagem ilustrativa esportiva será exibida.</small>
+          <small class="field-error" id="erro-foto"></small>
+        </div>
+
+        <!-- Preview da Imagem no Formulário -->
+        <div class="preview-section">
+          <span class="preview-label">Pré-visualização da Foto:</span>
+          <div class="preview-box">
+            <img id="form-img-preview" src="" alt="Prévia da foto">
+            <div id="preview-placeholder" class="preview-placeholder">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span>Nenhuma foto para prévia</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="btn-cancelar" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" id="btn-salvar" class="btn btn-primary">
+            <span class="btn-text">Salvar Acessório</span>
+            <div class="btn-spinner hidden"></div>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  <div id="modal-delete" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-del-title">
+    <div class="modal-box modal-box-sm">
+      <div class="delete-icon-wrapper">
+        <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
+      <h3 id="modal-del-title">Excluir Acessório?</h3>
+      <p class="delete-warning-text">
+        Tem certeza que deseja excluir <strong id="delete-item-nome">este item</strong>? Essa ação é permanente e não poderá ser desfeita.
+      </p>
+      <div class="modal-footer justify-center">
+        <button id="btn-cancelar-delete" class="btn btn-secondary">Cancelar</button>
+        <button id="btn-confirmar-delete" class="btn btn-danger">Excluir Definitivamente</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Toasts (Notificações Flutuantes) -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Script Principal -->
+  <script src="script.js"></script>
+</body>
+</html>
